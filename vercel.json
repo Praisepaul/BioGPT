@@ -11,5 +11,5 @@
       "dest": "wsgi.py"
     }
   ],
-  "ignoreBuildStep": true
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD ./"
 }
