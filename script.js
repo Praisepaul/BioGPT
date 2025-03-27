@@ -1,3 +1,5 @@
+const API_URL = "https://biogpt-1.onrender.com/chat"; // Replace with your actual Render URL
+
 async function sendMessage() {
     const userInput = document.getElementById("user-input").value;
     if (!userInput) return;
@@ -7,7 +9,7 @@ async function sendMessage() {
 
     document.getElementById("user-input").value = "";
 
-    const response = await fetch("http://127.0.0.1:4000/chat", {
+    const response = await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: userInput }),
