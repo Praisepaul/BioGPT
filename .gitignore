@@ -1,5 +1,7 @@
 .vercel
-node_modules
 venv
 venvsource
-requirements.txt
+model/
+vercel.json
+wsgi.py
+.vercelignore

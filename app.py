@@ -1,22 +1,32 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from model.inference import generate_response
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 app = Flask(__name__)
-CORS(app)
+CORS(app)  # Enable CORS for frontend requests
 
-@app.route('/api/v1/chat', methods=['POST'])
+# Load fine-tuned LoRA model
+model_name = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"  # Change to your fine-tuned model path
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForCausalLM.from_pretrained(
+    model_name,
+    torch_dtype=torch.float16,
+    device_map="cpu"
+)
+
+@app.route("/chat", methods=["POST"])
 def chat():
-    try:
-        data = request.get_json()
-        prompt = data.get("prompt")
-        if not prompt:
-            return jsonify({"error": "Prompt is required"}), 400
+    user_input = request.json.get("message")
+    
+    if not user_input:
+        return jsonify({"error": "No input provided"}), 400
 
-        response = generate_response(prompt)
-        return jsonify({"response": response})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    inputs = tokenizer(user_input, return_tensors="pt").to("cpu")
+    output = model.generate(**inputs, max_length=200)
 
-if __name__ == '__main__':
-    app.run(debug=True)
+    bot_response = tokenizer.decode(output[0], skip_special_tokens=True)
+    return jsonify({"reply": bot_response})
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=4000, debug=True)

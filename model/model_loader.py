@@ -1,14 +1,9 @@
-from transformers import AutoTokenizer, AutoModelForCausalLM, AutoModel
+from transformers import BioGptTokenizer, BioGptForCausalLM
 
-# Load BioGPT or ClinicalBERT
-def load_model(model_name):
+def load_model(model_name='biogpt'):
     if model_name == 'biogpt':
-        tokenizer = AutoTokenizer.from_pretrained("microsoft/biogpt")
-        model = AutoModelForCausalLM.from_pretrained("microsoft/biogpt")
-    #elif model_name == 'clinicalbert':
-    #    tokenizer = AutoTokenizer.from_pretrained("emilyalsentzer/Bio_ClinicalBERT")
-    #    model = AutoModel.from_pretrained("emilyalsentzer/Bio_ClinicalBERT")
+        tokenizer = BioGptTokenizer.from_pretrained("microsoft/biogpt")
+        model = BioGptForCausalLM.from_pretrained("microsoft/biogpt")
     else:
-        raise ValueError("Invalid model name. Use 'biogpt' or 'clinicalbert'")
-    
+        raise ValueError("Invalid model name. Use 'biogpt'")
     return tokenizer, model
